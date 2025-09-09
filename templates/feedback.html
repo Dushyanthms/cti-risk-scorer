@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Feedback Review</title>
+    <style>
+        body { background:#121212; color:white; font-family:Arial; padding:20px; }
+        h1 { color:#00bcd4; display:flex; justify-content:space-between; align-items:center; }
+        .logout-btn { background:#f44336; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; text-decoration:none; }
+        .feedback-box { background:#1e1e1e; padding:15px; margin:10px 0; border-radius:8px; }
+        .safe { color:#4caf50; font-weight:bold; }
+        .risky { color:#f44336; font-weight:bold; }
+        .log { font-size:0.9em; color:#bbb; }
+        button { margin-left:10px; padding:5px 10px; cursor:pointer; border:none; border-radius:5px; }
+        .btn-safe { background:#4caf50; color:white; }
+        .btn-risky { background:#f44336; color:white; }
+        .btn-delete { background:gray; color:white; }
+        button:disabled { opacity:0.5; cursor:not-allowed; }
+    </style>
+</head>
+<body>
+    <h1>
+      Admin Feedback Review
+      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </h1>
+
+    {% for fb in feedbacks %}
+        <div class="feedback-box">
+            <p><strong>IOC:</strong> {{ fb.ioc_value }}</p>
+            <p><strong>User Marked:</strong> {{ fb.feedback }}</p>
+            <p>
+              📂 Dataset Status:
+              {% if fb.exists_in_dataset %}
+                ✅ Already in dataset → <b>{{ fb.dataset_label }}</b>
+              {% else %}
+                🆕 Not in dataset (NEW IOC)
+              {% endif %}
+            </p>
+            {% if fb.admin_action %}
+              <p class="log">📝 Admin Action: {{ fb.admin_action }} ({{ fb.admin_timestamp }})</p>
+            {% endif %}
+
+            <form method="POST">
+              <input type="hidden" name="ioc_value" value="{{ fb.ioc_value }}">
+              <button class="btn-safe" name="action" value="safe" {% if fb.admin_action %}disabled{% endif %}>✅ Mark Safe</button>
+              <button class="btn-risky" name="action" value="risky" {% if fb.admin_action %}disabled{% endif %}>❌ Mark Risky</button>
+              <button class="btn-delete" name="action" value="delete">🗑️ Delete</button>
+            </form>
+        </div>
+    {% else %}
+        <p>No feedbacks yet 🚀</p>
+    {% endfor %}
+</body>
+</html>

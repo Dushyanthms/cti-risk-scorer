@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IOC Risk Scorer</title>
+  <style>
+    body { font-family: Arial; background:#121212; color:#fff; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
+    .container { background:#1e1e1e; padding:25px; border-radius:12px; box-shadow:0 0 15px rgba(0,0,0,0.7); text-align:center; width:420px; }
+    h1 { color:#00bcd4; margin-bottom:20px; }
+    label { display:block; text-align:left; margin:10px 0 5px; font-weight:bold; }
+    select, input { width:100%; padding:10px; border-radius:6px; border:none; background:#2a2a2a; color:#fff; margin-bottom:15px; }
+    button { background:#0066ff; color:#fff; border:none; padding:12px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer; }
+    button:hover { background:#0044aa; }
+    .result { margin-top:20px; padding:15px; border-radius:10px; text-align:left; }
+    .success { background:#1b5e20; color:#a5d6a7; }
+    .danger { background:#b71c1c; color:#ef9a9a; }
+    .feedback-form { margin-top:15px; }
+    .feedback-form button { width:auto; margin:5px; }
+    .admin-link { margin-top:15px; display:block; text-align:center; color:#00bcd4; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>IOC Risk Scorer</h1>
+    <form method="POST" action="/check">
+      <label for="ioc_type">Select IOC Type:</label>
+      <select name="ioc_type" id="ioc_type" required>
+        <option value="url" selected>URL</option>
+        <option value="domain">Domain</option>
+        <option value="ip">IP</option>
+        <option value="hash">Hash</option>
+      </select>
+      <label for="ioc_value">Enter IOC Value:</label>
+      <input type="text" name="ioc_value" id="ioc_value" placeholder="Enter IOC value..." required />
+      <button type="submit">Check Risk</button>
+    </form>
+
+    {% if result %}
+    <div class="result {% if result.prediction == 'benign' %}success{% else %}danger{% endif %}">
+      <p>🔍 <b>IOC Type:</b> {{ result.ioc_type }}</p>
+      <p>📌 <b>Value:</b> {{ result.ioc_value }}</p>
+      <p>📊 <b>Prediction:</b> {{ result.prediction }}</p>
+      {% if result.risk_score %}<p>⚡ <b>Risk Score:</b> {{ result.risk_score }}/100</p>{% endif %}
+      {% if result.confidence %}<p>✅ <b>Confidence:</b> {{ result.confidence }}%</p>{% endif %}
+    </div>
+
+    <form method="POST" action="/feedback" class="feedback-form">
+      <input type="hidden" name="ioc_type" value="{{ result.ioc_type }}">
+      <input type="hidden" name="ioc_value" value="{{ result.ioc_value }}">
+      <button name="feedback" value="safe">👍 Mark as Safe</button>
+      <button name="feedback" value="unsafe">👎 Mark as Unsafe</button>
+    </form>
+    {% endif %}
+
+    <a href="{{ url_for('admin_login') }}">🔒 View Feedbacks (Admin)</a>
+  </div>
+</body>
+</html>

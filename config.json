@@ -1,0 +1,31 @@
+{
+  
+  "SAFE_DOMAINS": [
+    "google.com",
+    "https://developer.mozilla.org/",
+    "www.google.com",
+    "microsoft.com",
+    "apple.com",
+    "amazon.com",
+    "open.ai"
+  ],
+  "IP_RULES": {
+    "private_ranges": [
+      "127.",
+      "10.",
+      "192.168.",
+      "172.16."
+    ]
+  },
+  "HASH_RULES": {
+    "min_length": 32,
+    "max_length": 64,
+    "valid_chars": "abcdef0123456789"
+  },
+  "THRESHOLDS": {
+    "high_risk": 0.85,
+    "medium_risk": 0.60
+  },
+  "ADMIN_USERNAME": "admin",
+  "ADMIN_PASSWORD": "admin123"
+}
